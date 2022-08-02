@@ -16,8 +16,17 @@
             opacity: 0.6;
             transition: all 0.35s ease-in;
         }
+        ul.pagination a {
+            cursor: pointer;
+        }
+        a.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+            background: #d5d5d5;
+            color: #000;
+        }
     </style>
-    <title>Document</title>
+    <title>Flight Logs</title>
 
 
 </head>
@@ -45,6 +54,10 @@
         <tbody>
         </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination" id="pagination">
+        </ul>
+    </nav>
 
 </div>
 
@@ -53,7 +66,7 @@
 <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function () {
-
+        load_data();
         $('th').append('<i class="fa-solid fa-arrow-down-z-a float-end" title="Sırala" style="display: inline-block !important; position: relative; z-index: 1; padding: 2em;margin: -2em;"></i>');
         $('#table_id').DataTable({
             searching: false,
@@ -85,16 +98,26 @@
                 );
             });
         }
+        // Panigate
+        function load_data(page) {
+            $('#table_id tbody tr').text("");
+            $.ajax({
+               url:'airline.php',
+               method:"post",
+               data:{page:page},
+               dataType:'json',
+                success:function (result) {
+                    $('#pagination').html(result.pagination);
+                    appendData(result);
 
-        // Fetch the data with ajax
-        $.ajax({
-            url: 'airline.php',
-            dataType: 'json',
-            type: 'GET',
-            success: function (result) {
-                appendData(result);
-            }
-        });
+                }
+            });
+        }
+        // Panigate Buttons
+        $(document).on('click','#pagination a',function (e) {
+            let id = $(this).attr('data-id');
+            load_data(id);
+        })
 
         // Fetch as much data as Count
         /*
@@ -177,15 +200,6 @@
             });
         });
 
-        // Paginate
-        $.ajax({
-           url:'paginate.php',
-           type:'GET',
-           dataType:'json',
-            success:function (result) {
-                console.log(result);
-            }
-        });
     });
 </script>
 </html>
