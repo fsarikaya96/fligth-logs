@@ -46,9 +46,10 @@ require_once('connect.php'); ?>
             text-align: center;
         }
 
+
         .loader {
             height: 4vh;
-            width:  4vh;
+            width: 4vh;
             border: 2px solid black;
             border-bottom-color: transparent;
             border-radius: 50%;
@@ -56,8 +57,8 @@ require_once('connect.php'); ?>
             box-sizing: border-box;
             animation: rotation 1s linear infinite;
             transform: scale(0.5);
-        }
 
+        }
         @keyframes rotation {
             0% {
                 transform: rotate(0deg);
@@ -66,6 +67,12 @@ require_once('connect.php'); ?>
                 transform: rotate(360deg);
             }
         }
+
+        .highlighted {
+            box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 5%);
+        }
+
+
     </style>
     <title>Flight Logs</title>
 
@@ -108,7 +115,7 @@ require_once('connect.php'); ?>
         $('th').append('<i class="fa-solid fa-arrow-down-z-a float-end" title="Sırala"></i>');
         $('#table_id').DataTable({
             searching: false,
-            // ordering: false,
+            ordering: false,
         });
 
         // We get the data to be added in the html function
@@ -181,8 +188,9 @@ require_once('connect.php'); ?>
 
         // Search ajax function()
         let timeoutID = null;
+
         function findMember(search) {
-            // console.log('search: ' + search)
+            // console.log(search)
             $.ajax({
                 url: 'airline.php',
                 type: 'POST',
@@ -192,12 +200,19 @@ require_once('connect.php'); ?>
                     $('.search-input').append('<span class="loader"></span>');
                 },
                 success: function (result) {
-                    setTimeout(function () {
+                    $('#table_id tbody tr').text("");
+                    if ($.trim(result.data)) {
+                            $('.empty-msg').remove();
+                            $('.loader').remove();
+                            $('#table_id tbody tr').remove();
+                            appendData(result);
+                    } else {
                         $('.loader').remove();
                         $('#table_id tbody tr').remove();
-                        appendData(result);
-                    }, 200);
+                        $('#table_id tbody').append('<tr><td colspan="7" style="border-top:0;text-align: center; vertical-align: middle;">No matching records found</td></tr>');
+                    }
                 }
+
             });
         }
 
@@ -220,6 +235,8 @@ require_once('connect.php'); ?>
                 }
             );
             $(this).click(function () {
+                let colFind = col + 1;
+                $(this).closest('#table_id').find('td:nth-child(' + colFind + ')').addClass('highlighted');
                 let sortOrder;
                 if ($(this).is('.asc')) {
                     $(this).removeClass('asc');
@@ -232,6 +249,7 @@ require_once('connect.php'); ?>
                 }
                 $(this).siblings().removeClass('asc selected');
                 $(this).siblings().removeClass('desc selected');
+                $(this).closest('#table_id').find('td:nth-child(' + colFind + ')').siblings().removeClass('highlighted');
                 const arrData = $('table').find('tbody >tr:has(td)').get();
                 arrData.sort(function (a, b) {
                     const val1 = $(a).children('td').eq(col).text().toUpperCase();
