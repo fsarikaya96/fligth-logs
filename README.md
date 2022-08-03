@@ -5,7 +5,7 @@
 **1. Clone Project**
 
 ```
- $ https://github.com/fsarikaya96/fligth-logs.git
+ $ git clone https://github.com/fsarikaya96/fligth-logs.git
  $ cd fligth-logs
 ```
 
