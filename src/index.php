@@ -1,5 +1,3 @@
-<?php
-require_once('connect.php'); ?>
 <!doctype html>
 <html lang="tr">
 <head>
@@ -11,7 +9,6 @@ require_once('connect.php'); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
     <link rel="stylesheet" href="resources/app.css">
     <title>Flight Logs</title>
-
 </head>
 <body>
 
@@ -35,7 +32,6 @@ require_once('connect.php'); ?>
         </tr>
         </thead>
         <tbody>
-
         </tbody>
     </table>
 </div>
@@ -44,6 +40,5 @@ require_once('connect.php'); ?>
 <script src="https://code.jquery.com/jquery-3.6.0.js" crossorigin="anonymous"></script>
 <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script src="resources/app.js"></script>
-
 
 </html>
