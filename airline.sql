@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: db
--- Üretim Zamanı: 03 Ağu 2022, 16:58:46
+-- Üretim Zamanı: 03 Ağu 2022, 20:24:32
 -- Sunucu sürümü: 8.0.30
 -- PHP Sürümü: 8.0.21
 
@@ -20,6 +20,38 @@ SET time_zone = "+00:00";
 --
 -- Veritabanı: `airline`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Tablo için tablo yapısı `captains`
+--
+
+CREATE TABLE `captains` (
+  `id` int NOT NULL,
+  `full_name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Tablo döküm verisi `captains`
+--
+
+INSERT INTO `captains` (`id`, `full_name`) VALUES
+(1, 'Ferhat Sarıkaya'),
+(2, 'Volkan'),
+(3, 'Arda'),
+(4, 'Emre '),
+(5, 'Doğuş'),
+(6, 'Ahmet'),
+(7, 'Mehmet'),
+(8, 'Vural'),
+(9, 'Uğur'),
+(10, 'Aylin'),
+(11, 'Ceylin'),
+(12, 'Vural'),
+(13, 'Ayça'),
+(14, 'Sevgi'),
+(15, 'Hakkı');
 
 -- --------------------------------------------------------
 
@@ -62,6 +94,12 @@ INSERT INTO `flight_logs` (`id`, `code`, `scheduled_date`, `origin`, `destinatio
 --
 
 --
+-- Tablo için indeksler `captains`
+--
+ALTER TABLE `captains`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Tablo için indeksler `flight_logs`
 --
 ALTER TABLE `flight_logs`
@@ -70,6 +108,12 @@ ALTER TABLE `flight_logs`
 --
 -- Dökümü yapılmış tablolar için AUTO_INCREMENT değeri
 --
+
+--
+-- Tablo için AUTO_INCREMENT değeri `captains`
+--
+ALTER TABLE `captains`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `flight_logs`

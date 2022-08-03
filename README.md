@@ -15,7 +15,7 @@
 ```
 **3. Note**
 ```
- Also available as "flight_logs.sql" in files. 
+ Also available as "airline.sql" in files. 
  Go to phpMyAdmin and import the sql file.
 ```
 

@@ -1,10 +1,10 @@
 version: '3.9'
 
 services:
-  php-env:
+  app:
     build: .
     volumes:
-      - ./src:/var/www/html
+      - ./src:/var/www/html/
     ports:
       - "8080:80"
 
@@ -23,3 +23,4 @@ services:
       - "8081:80"
     environment:
       - PMA_ARBITRARY=1
+
