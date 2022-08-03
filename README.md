@@ -6,12 +6,11 @@
 
 ```
  $ git clone https://github.com/fsarikaya96/fligth-logs.git
- $ cd fligth-logs
 ```
 
 **2. Install**
 ```
- $ docker-compose up -d
+ $ docker-compose up -build
 ```
 **3. Note**
 ```
