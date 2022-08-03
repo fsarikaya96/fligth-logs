@@ -1,4 +1,6 @@
-<?php require_once('connect.php'); ?>
+<?php
+
+require_once('connect.php'); ?>
 <!doctype html>
 <html lang="tr">
 <head>
@@ -9,21 +11,60 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
     <style>
-        i{
+        i {
             transition: all 0.35s ease-in-out;
+            display: inline-block !important;
+            position: relative;
+            z-index: 1;
+            padding: 2em;
+            margin: -2em;
         }
-        i:hover{
+
+        i:hover {
             opacity: 0.6;
             transition: all 0.35s ease-in;
         }
+
         ul.pagination a {
             cursor: pointer;
         }
+
         a.disabled {
             pointer-events: none;
             opacity: 0.6;
             background: #d5d5d5;
             color: #000;
+        }
+
+        #notFound {
+            position: absolute;
+            width: 250px;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+
+        .loader {
+            height: 4vh;
+            width:  4vh;
+            border: 2px solid black;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            transform: scale(0.5);
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
     <title>Flight Logs</title>
@@ -31,12 +72,13 @@
 
 </head>
 <body>
-<div class="container py-2 mt-2">
-    <div class="col-md-2 float-end">
-        <span class="alert alert-danger position-relative" style="top:35px; right: 175px;" id="notFound">Kayıt Bulunamadı..</span>
-        <label for="search"></label>
-        <input type="text" id="search" class="form-control" name="search" placeholder="">
 
+<div class="container py-2 mt-2">
+    <div class="row float-end search-input">
+        <label for="search" class="col-2 col-form-label col-form-label-sm">Search:</label>
+        <div class="col-md-8">
+            <input type="text" id="search" class="form-control" name="search">
+        </div>
     </div>
 
     <table id="table_id" class="display">
@@ -52,13 +94,9 @@
         </tr>
         </thead>
         <tbody>
+
         </tbody>
     </table>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination" id="pagination">
-        </ul>
-    </nav>
-
 </div>
 
 </body>
@@ -67,17 +105,20 @@
 <script>
     $(document).ready(function () {
         load_data();
-        $('th').append('<i class="fa-solid fa-arrow-down-z-a float-end" title="Sırala" style="display: inline-block !important; position: relative; z-index: 1; padding: 2em;margin: -2em;"></i>');
+        $('th').append('<i class="fa-solid fa-arrow-down-z-a float-end" title="Sırala"></i>');
         $('#table_id').DataTable({
             searching: false,
-            ordering: false,
+            // ordering: false,
         });
+
         // We get the data to be added in the html function
         function appendData(result) {
+            $('#notFound').remove();
             $('.odd').remove();
             result.data.forEach(function (item) {
+                let start_count = $('#table_id').find('td:first').text();
+                $('#table_id_info').text("Showing " + start_count + " to " + result.page_count + " of " + result.total_count + " entries");
 
-                $('#table_id_info').text("Showing 0 to 0 of " + item['total_count'] +" entries");
                 // Convert DateTime Format
                 const dateTimeSplit = item['scheduled_date'].split(' ');
                 const dateSplit = dateTimeSplit[0].split('-');
@@ -87,7 +128,7 @@
                 const status = (item['status'] == 0) ? "Planned" : "Done";
                 $('tbody').append(
                     '<tr>' +
-                    '<td>' + item['id'] + '</td>' +
+                    '<td data-id=' + item['id'] + '>' + item['id'] + '</td>' +
                     '<td>' + item['code'] + '</td>' +
                     '<td>' + currentDate + ' ' + currentTime + '</td>' +
                     '<td>' + item['origin'] + '</td>' +
@@ -98,66 +139,74 @@
                 );
             });
         }
+
         // Panigate
         function load_data(page) {
             $('#table_id tbody tr').text("");
             $.ajax({
-               url:'airline.php',
-               method:"post",
-               data:{page:page},
-               dataType:'json',
-                success:function (result) {
-                    $('#pagination').html(result.pagination);
+                url: 'airline.php',
+                method: "post",
+                data: {page: page},
+                dataType: 'json',
+                success: function (result) {
+                    $('#table_id_paginate').html(result.pagination);
                     appendData(result);
 
                 }
             });
         }
+
         // Panigate Buttons
-        $(document).on('click','#pagination a',function (e) {
-            let id = $(this).attr('data-id');
+        $(document).on('click', '#table_id_paginate a', function (e) {
+            let id = $(this).attr('data-dt-idx');
+            $("select").val($("select option:first").val());
+            $('#table_id tbody tr').empty().remove();
             load_data(id);
         })
 
         // Fetch as much data as Count
-        /*
         $(document).on('change', 'select', function () {
             let count = $("select option:selected").val();
             $.ajax({
                 url: 'airline.php',
-                type: 'GET',
+                type: 'POST',
                 dataType: 'json',
                 data: {count: count},
                 success: function (result) {
                     appendData(result);
+                    $('#table_id_paginate').html(result.pagination);
                 }
             });
         });
-        */
-        // Search Input
-        let notFound = $("#notFound");
-        notFound.hide();
-        $("#search").on("keyup", function() {
-            $('.odd').remove();
-            const value = $(this).val().toLowerCase()
 
-            const allItems = $("#table_id tbody tr");
-
-            const matchedItems = $(allItems).filter(function() {
-                return $(this).text().toLowerCase().indexOf(value) > -1
+        // Search ajax function()
+        let timeoutID = null;
+        function findMember(search) {
+            // console.log('search: ' + search)
+            $.ajax({
+                url: 'airline.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {search: search},
+                beforeSend: function () {
+                    $('.search-input').append('<span class="loader"></span>');
+                },
+                success: function (result) {
+                    setTimeout(function () {
+                        $('.loader').remove();
+                        $('#table_id tbody tr').remove();
+                        appendData(result);
+                    }, 200);
+                }
             });
+        }
 
-            allItems.toggle(false)
+        // Search ajax
+        $('#search').keyup(function (e) {
+            clearTimeout(timeoutID);
+            const value = e.target.value
+            timeoutID = setTimeout(() => findMember(value), 200);
 
-            matchedItems.toggle(true)
-
-            if (matchedItems.length === 0) {
-                notFound.show();
-
-            }
-            else {
-                notFound.hide();
-            }
         });
 
         // Sort Table
@@ -199,6 +248,7 @@
                 });
             });
         });
+
 
     });
 </script>
