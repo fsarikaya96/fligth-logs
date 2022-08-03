@@ -24,6 +24,9 @@
 ```
  $ http://localhost:8080
  $ http://localhost:8081
+ DATABASE: airline
+ mysql_username: root
+ mysql_password: root
 ```
 
 
