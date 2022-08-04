@@ -10,7 +10,7 @@
 
 **2. Install**
 ```
- $ docker-compose up -build
+ $ docker-compose up --build
 ```
 **3. Note**
 ```
